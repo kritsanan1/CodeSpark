@@ -8,6 +8,7 @@ import {
   insertCommunityPostSchema,
   insertAiSuggestionSchema 
 } from "@shared/schema";
+import { geminiService, CodeGenerationRequest } from "./gemini-service";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // User routes
@@ -204,6 +205,112 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Gemini AI API routes
+  app.post("/api/ai/analyze-code", async (req, res) => {
+    try {
+      const { code, fileName } = req.body;
+      if (!code || !fileName) {
+        return res.status(400).json({ message: "Code and filename are required" });
+      }
+      
+      const analysis = await geminiService.analyzeCode(code, fileName);
+      res.json(analysis);
+    } catch (error) {
+      console.error('Code analysis error:', error);
+      res.status(500).json({ message: "Code analysis failed" });
+    }
+  });
+
+  app.post("/api/ai/generate-code", async (req, res) => {
+    try {
+      const request: CodeGenerationRequest = req.body;
+      if (!request.prompt || !request.language) {
+        return res.status(400).json({ message: "Prompt and language are required" });
+      }
+      
+      const generatedCode = await geminiService.generateCode(request);
+      res.json({ code: generatedCode });
+    } catch (error) {
+      console.error('Code generation error:', error);
+      res.status(500).json({ message: "Code generation failed" });
+    }
+  });
+
+  app.post("/api/ai/suggestions", async (req, res) => {
+    try {
+      const { code, cursorPosition, fileName } = req.body;
+      if (!code || cursorPosition === undefined || !fileName) {
+        return res.status(400).json({ message: "Code, cursor position, and filename are required" });
+      }
+      
+      const suggestions = await geminiService.getCodeSuggestions(code, cursorPosition, fileName);
+      res.json({ suggestions });
+    } catch (error) {
+      console.error('Code suggestions error:', error);
+      res.status(500).json({ message: "Code suggestions failed" });
+    }
+  });
+
+  app.post("/api/ai/explain-code", async (req, res) => {
+    try {
+      const { code } = req.body;
+      if (!code) {
+        return res.status(400).json({ message: "Code is required" });
+      }
+      
+      const explanation = await geminiService.explainCode(code);
+      res.json({ explanation });
+    } catch (error) {
+      console.error('Code explanation error:', error);
+      res.status(500).json({ message: "Code explanation failed" });
+    }
+  });
+
+  app.post("/api/ai/generate-tests", async (req, res) => {
+    try {
+      const { code, framework = 'jest' } = req.body;
+      if (!code) {
+        return res.status(400).json({ message: "Code is required" });
+      }
+      
+      const tests = await geminiService.generateTests(code, framework);
+      res.json({ tests });
+    } catch (error) {
+      console.error('Test generation error:', error);
+      res.status(500).json({ message: "Test generation failed" });
+    }
+  });
+
+  app.post("/api/ai/refactor-code", async (req, res) => {
+    try {
+      const { code, refactorType } = req.body;
+      if (!code || !refactorType) {
+        return res.status(400).json({ message: "Code and refactor type are required" });
+      }
+      
+      const refactoredCode = await geminiService.refactorCode(code, refactorType);
+      res.json({ code: refactoredCode });
+    } catch (error) {
+      console.error('Code refactoring error:', error);
+      res.status(500).json({ message: "Code refactoring failed" });
+    }
+  });
+
+  app.post("/api/ai/generate-docs", async (req, res) => {
+    try {
+      const { code } = req.body;
+      if (!code) {
+        return res.status(400).json({ message: "Code is required" });
+      }
+      
+      const documentedCode = await geminiService.generateDocumentation(code);
+      res.json({ code: documentedCode });
+    } catch (error) {
+      console.error('Documentation generation error:', error);
+      res.status(500).json({ message: "Documentation generation failed" });
     }
   });
 

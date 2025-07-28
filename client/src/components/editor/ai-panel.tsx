@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Brain, Send, Lightbulb, Code, AlertTriangle, Zap } from "lucide-react";
 import { Project } from "@shared/schema";
+import { geminiClient } from "@/lib/gemini-client";
 import { aiService, AIMessage, AISuggestion } from "@/lib/ai-service";
 import { useToast } from "@/hooks/use-toast";
 
@@ -59,19 +60,84 @@ export const ProductCard: React.FC<ProductCardProps> = ({ id, name, price, image
     if (!inputMessage.trim()) return;
 
     setIsLoading(true);
+    const message = inputMessage;
+    setInputMessage("");
+    
     try {
-      const response = await aiService.sendMessage(inputMessage);
-      setMessages(aiService.getMessages());
-      setInputMessage("");
+      // Add user message first
+      const userMessage: AIMessage = {
+        id: Date.now().toString(),
+        type: 'user',
+        content: message,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, userMessage]);
+
+      // Use Gemini AI for intelligent responses
+      let aiResponse = '';
       
-      if (response.suggestions) {
-        setSuggestions(prev => [...prev, ...response.suggestions!]);
+      if (message.toLowerCase().includes('analyze') || message.toLowerCase().includes('review')) {
+        aiResponse = "I'll analyze your code for potential improvements. Please share the code you'd like me to review.";
+      } else if (message.toLowerCase().includes('generate') || message.toLowerCase().includes('create')) {
+        const generatedCode = await geminiClient.generateCode({
+          prompt: message,
+          language: 'typescript',
+          framework: 'react'
+        });
+        aiResponse = `Here's the code I generated for you:\n\n\`\`\`typescript\n${generatedCode}\n\`\`\``;
+      } else if (message.toLowerCase().includes('explain')) {
+        aiResponse = "I'd be happy to explain code for you. Please share the code snippet you'd like me to explain.";
+      } else {
+        const explanation = await geminiClient.explainCode(message);
+        aiResponse = explanation;
       }
+      
+      const assistantMessage: AIMessage = {
+        id: (Date.now() + 1).toString(),
+        type: 'assistant',
+        content: aiResponse,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+      
+      // Generate code suggestions using Gemini
+      if (currentFile) {
+        try {
+          const suggestions = await geminiClient.getCodeSuggestions(
+            "// Current file context", 
+            0, 
+            currentFile
+          );
+          
+          const newSuggestions: AISuggestion[] = suggestions.slice(0, 3).map(suggestion => ({
+            id: Date.now().toString() + Math.random(),
+            type: 'optimization',
+            title: 'AI Suggestion',
+            description: suggestion,
+            confidence: 0.85,
+            code: suggestion
+          }));
+          
+          setSuggestions(prev => [...newSuggestions, ...prev.slice(0, 2)]);
+        } catch (error) {
+          console.error('Failed to generate suggestions:', error);
+        }
+      }
+      
     } catch (error) {
+      console.error('AI response error:', error);
+      const errorMessage: AIMessage = {
+        id: (Date.now() + 2).toString(),
+        type: 'assistant',
+        content: "I'm having trouble connecting to the AI service right now. Please try again in a moment.",
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      
       toast({
         title: "Error",
-        description: "Failed to send message to AI assistant.",
-        variant: "destructive",
+        description: "Failed to get AI response",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);

@@ -19,6 +19,7 @@ import {
   TestTube,
   RefreshCw
 } from "lucide-react";
+import { geminiClient, CodeAnalysisResult, CodeGenerationRequest } from "@/lib/gemini-client";
 
 interface AIAnalysisResult {
   type: 'suggestion' | 'warning' | 'optimization' | 'bug' | 'refactor';
@@ -119,30 +120,54 @@ export default function AdvancedAIFeatures() {
   const runCodeAnalysis = async () => {
     setIsAnalyzing(true);
     
-    // Simulate AI analysis
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      // Use real Gemini AI for code analysis
+      const sampleCode = `function handleSubmit(event) {
+  event.preventDefault();
+  const formData = new FormData(event.target);
+  const userData = formData.get('user');
+  
+  // Process user data
+  if (userData) {
+    processUserData(userData);
+  }
+}
+
+function processUserData(data) {
+  console.log('Processing:', data);
+  // Large function with 150+ lines...
+  // Multiple responsibilities mixed together
+  validateData(data);
+  formatData(data);
+  sendToServer(data);
+  updateUI(data);
+}`;
+
+      const analysis = await geminiClient.analyzeCode(sampleCode, 'example.js');
+      
+      // Convert analysis results to our format
+      const newResults: AIAnalysisResult[] = analysis.suggestions.map(suggestion => ({
+        type: suggestion.type,
+        severity: suggestion.severity,
+        title: suggestion.title,
+        description: suggestion.description,
+        line: suggestion.line,
+        confidence: suggestion.confidence
+      }));
+      
+      setAnalysisResults(newResults);
+    } catch (error) {
+      console.error('Analysis failed:', error);
+      // Fallback results on error
+      setAnalysisResults([{
+        type: 'warning',
+        severity: 'low',
+        title: 'Analysis Service Unavailable',
+        description: 'Unable to connect to AI analysis service. Please check your connection.',
+        confidence: 0
+      }]);
+    }
     
-    // Add new analysis results
-    const newResults: AIAnalysisResult[] = [
-      {
-        type: 'bug',
-        severity: 'high',
-        title: 'Undefined variables detected',
-        description: 'Variable "userData" is used but never defined in the handleSubmit function.',
-        line: 126,
-        confidence: 95
-      },
-      {
-        type: 'refactor',
-        severity: 'medium',
-        title: 'Large component detected',
-        description: 'The Dashboard component has 200+ lines. Consider breaking it into smaller components.',
-        line: 1,
-        confidence: 88
-      }
-    ];
-    
-    setAnalysisResults(prev => [...newResults, ...prev]);
     setIsAnalyzing(false);
   };
 
@@ -151,56 +176,21 @@ export default function AdvancedAIFeatures() {
     
     setIsGenerating(true);
     
-    // Simulate AI code generation
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // Use real Gemini AI for code generation
+      const generatedCode = await geminiClient.generateCode({
+        prompt: codeGenRequest.prompt,
+        context: codeGenRequest.context,
+        language: codeGenRequest.language,
+        framework: codeGenRequest.framework
+      });
+      
+      setGeneratedCode(generatedCode);
+    } catch (error) {
+      console.error('Code generation failed:', error);
+      setGeneratedCode(`// Code generation failed: ${error instanceof Error ? error.message : 'Unknown error'}\n// Please check your connection and try again.`);
+    }
     
-    // Generate mock code based on prompt
-    const mockCode = `// Generated code based on: "${codeGenRequest.prompt}"
-import React, { useState, useEffect } from 'react';
-
-interface ${codeGenRequest.prompt.includes('user') ? 'User' : 'Data'}Props {
-  id: string;
-  name: string;
-  ${codeGenRequest.prompt.includes('email') ? 'email: string;' : ''}
-}
-
-export default function Generated${codeGenRequest.prompt.includes('component') ? 'Component' : 'Hook'}() {
-  const [data, setData] = useState<${codeGenRequest.prompt.includes('user') ? 'User' : 'Data'}Props | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // ${codeGenRequest.prompt}
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        // Implementation would go here
-        const response = await fetch('/api/data');
-        const result = await response.json();
-        setData(result);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!data) return <div>No data found</div>;
-
-  return (
-    <div>
-      <h2>{data.name}</h2>
-      {/* Add more UI elements based on your requirements */}
-    </div>
-  );
-}`;
-
-    setGeneratedCode(mockCode);
     setIsGenerating(false);
   };
 
