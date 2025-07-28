@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(240, 10%, 3.9%);
+  --muted: hsl(240, 4.8%, 95.9%);
+  --muted-foreground: hsl(240, 3.8%, 46.1%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(240, 10%, 3.9%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(240, 10%, 3.9%);
+  --border: hsl(240, 5.9%, 90%);
+  --input: hsl(240, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 4.8%, 95.9%);
+  --secondary-foreground: hsl(240, 5.9%, 10%);
+  --accent: hsl(240, 4.8%, 95.9%);
+  --accent-foreground: hsl(240, 5.9%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(240, 10%, 3.9%);
+  --radius: 0.5rem;
+  
+  /* Dyad custom colors */
+  --dyad-primary: hsl(207, 90%, 54%);
+  --dyad-secondary: hsl(246, 83%, 67%);
+  --dyad-accent: hsl(160, 84%, 39%);
+  --dyad-dark-bg: hsl(215, 28%, 7%);
+  --dyad-dark-surface: hsl(217, 19%, 12%);
+  --dyad-dark-border: hsl(215, 14%, 19%);
+  --dyad-dark-text: hsl(210, 20%, 98%);
+  --dyad-dark-muted: hsl(217, 10%, 64%);
+}
+
+.dark {
+  --background: hsl(215, 28%, 7%);
+  --foreground: hsl(210, 20%, 98%);
+  --muted: hsl(217, 19%, 12%);
+  --muted-foreground: hsl(217, 10%, 64%);
+  --popover: hsl(217, 19%, 12%);
+  --popover-foreground: hsl(210, 20%, 98%);
+  --card: hsl(217, 19%, 12%);
+  --card-foreground: hsl(210, 20%, 98%);
+  --border: hsl(215, 14%, 19%);
+  --input: hsl(215, 14%, 19%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(217, 19%, 12%);
+  --secondary-foreground: hsl(210, 20%, 98%);
+  --accent: hsl(217, 19%, 12%);
+  --accent-foreground: hsl(210, 20%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(210, 20%, 98%);
+  --ring: hsl(217, 10%, 64%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+}
+
+@layer components {
+  .dyad-sidebar-gradient {
+    background: linear-gradient(135deg, var(--dyad-primary), var(--dyad-secondary));
+  }
+  
+  .dyad-accent-gradient {
+    background: linear-gradient(135deg, var(--dyad-accent), var(--dyad-primary));
+  }
+  
+  .dyad-code-bg {
+    background-color: var(--dyad-dark-bg);
+  }
+  
+  .dyad-surface {
+    background-color: var(--dyad-dark-surface);
+  }
+  
+  .dyad-border {
+    border-color: var(--dyad-dark-border);
+  }
+  
+  .dyad-text {
+    color: var(--dyad-dark-text);
+  }
+  
+  .dyad-text-muted {
+    color: var(--dyad-dark-muted);
+  }
+}
+
+/* Monaco Editor overrides */
+.monaco-editor {
+  background-color: var(--dyad-dark-bg) !important;
+}
+
+.monaco-editor .margin {
+  background-color: var(--dyad-dark-surface) !important;
+}
+
+.monaco-editor .line-numbers {
+  color: var(--dyad-dark-muted) !important;
+}
