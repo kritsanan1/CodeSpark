@@ -1,0 +1,90 @@
+graph TB
+    subgraph "Frontend Layer"
+        A[React App] --> B[React Router]
+        B --> C[Editor Page]
+        B --> D[Templates Page]
+        B --> E[Community Page]
+        B --> F[Settings Page]
+        
+        C --> G[Code Editor]
+        C --> H[AI Panel]
+        C --> I[File Explorer]
+        C --> J[Terminal]
+        
+        G --> K[Monaco Editor]
+        H --> L[AI Suggestions]
+        I --> M[File Tree]
+        J --> N[Command Interface]
+        
+        O[TanStack Query] --> P[API Client]
+        Q[Theme Provider] --> R[Dark/Light Mode]
+        S[shadcn/ui] --> T[Component Library]
+    end
+    
+    subgraph "Backend Layer"
+        U[Express Server] --> V[API Routes]
+        V --> W[Users API]
+        V --> X[Projects API]
+        V --> Y[Templates API]
+        V --> Z[Community API]
+        V --> AA[AI API]
+        
+        BB[Middleware] --> CC[CORS]
+        BB --> DD[Rate Limiting]
+        BB --> EE[Validation]
+        BB --> FF[Logging]
+        
+        GG[Services] --> HH[Storage Service]
+        GG --> II[Gemini Service]
+        GG --> JJ[Auth Service]
+    end
+    
+    subgraph "Database Layer"
+        KK[PostgreSQL] --> LL[users]
+        KK --> MM[projects]
+        KK --> NN[templates]
+        KK --> OO[community_posts]
+        KK --> PP[ai_suggestions]
+        
+        QQ[Drizzle ORM] --> KK
+    end
+    
+    subgraph "External Services"
+        RR[Google Gemini API] --> SS[Code Analysis]
+        RR --> TT[Code Generation]
+        RR --> UU[Suggestions]
+        RR --> VV[Refactoring]
+        
+        WW[Supabase] --> XX[Authentication]
+        WW --> YY[Real-time]
+        WW --> ZZ[Storage]
+    end
+    
+    subgraph "Development Tools"
+        AAA[Vite] --> BBB[Dev Server]
+        AAA --> CCC[Build Tool]
+        
+        DDD[TypeScript] --> EEE[Type Checking]
+        FFF[ESLint] --> GGG[Code Quality]
+        HHH[Prettier] --> III[Formatting]
+        JJJ[Tailwind CSS] --> KKK[Styling]
+    end
+    
+    %% Data Flow
+    A -->|HTTP/REST| U
+    U -->|SQL Queries| QQ
+    U -->|AI API Calls| RR
+    U -->|Cloud APIs| WW
+    
+    %% Styling
+    classDef frontend fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+    classDef backend fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    classDef database fill:#f3e8ff,stroke:#8b5cf6,stroke-width:2px
+    classDef external fill:#ecfdf5,stroke:#10b981,stroke-width:2px
+    classDef devtools fill:#fce7f3,stroke:#ec4899,stroke-width:2px
+    
+    class A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T frontend
+    class U,V,W,X,Y,Z,AA,BB,CC,DD,EE,FF,GG,HH,II,JJ backend
+    class KK,LL,MM,NN,OO,PP,QQ database
+    class RR,SS,TT,UU,VV,WW,XX,YY,ZZ external
+    class AAA,BBB,CCC,DDD,EEE,FFF,GGG,HHH,III,JJJ,KKK devtools

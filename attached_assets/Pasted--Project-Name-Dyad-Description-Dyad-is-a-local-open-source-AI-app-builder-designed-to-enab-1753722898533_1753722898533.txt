@@ -1,0 +1,92 @@
+# Project Name: Dyad
+
+## Description
+Dyad is a local, open-source AI app builder designed to enable developers to create applications quickly with AI assistance. It emphasizes speed, privacy, and user control, operating directly on the user's machine.
+
+## Primary Goals
+- Provide a robust platform for rapid application development with AI assistance.
+- Maintain user privacy by ensuring all operations are conducted locally.
+- Foster a community-driven approach to software development through open-source collaboration.
+
+----------------------------------------------------
+
+## Tech Stack & Environment
+
+**Frontend:** Vite + React + TypeScript + Tailwind CSS
+
+**Backend:** Supabase (PostgreSQL + Auth)
+
+**Target Platform:** Single-Page Application
+
+**Framework Versions & Config:** Latest stable versions
+
+----------------------------------------------------
+
+## Requirements & Features
+
+### Core Features:
+
+- **AI-Assisted Development:** Provides intelligent code suggestions and auto-completion to speed up the development process.
+
+- **Local Execution:** Runs entirely on the user's machine, ensuring privacy and control over the development environment.
+
+- **Open-Source:** Allows developers to modify and extend the tool according to their needs.
+
+- **Fast Performance:** Optimized for quick response times and efficient processing.
+
+- **User-Friendly Interface:** Designed with an intuitive UI to make it accessible for developers of all skill levels.
+
+- **Integration Capabilities:** Supports integration with popular development tools and platforms.
+
+- **Customizable Templates:** Offers a variety of templates to kickstart different types of projects.
+
+- **Community Support:** Backed by a community of developers contributing to its growth and improvement.
+
+### User Flows
+- User installs Dyad locally and configures initial settings.
+- User selects a project template to start a new application.
+- AI assists with code suggestions as the user develops the application.
+- User integrates other development tools for a seamless workflow.
+- Ongoing community engagement through contributions and feedback.
+
+### Business Rules
+- All operations must be performed locally with no external server dependencies.
+- Ensure all code suggestions and completions are generated in real-time.
+- Maintain open-source licensing to encourage community contributions.
+
+----------------------------------------------------
+
+## UI/UX Design
+
+### Layout
+- A single-page layout with a sidebar for navigation and a main area for code editing and AI interactions.
+
+### Look & Feel
+- Modern and minimalistic design, focusing on usability and developer efficiency.
+
+### Pages
+- Main Editor Page
+- Settings/Configuration Page
+- Community/Support Page
+
+### Components
+- Navigation Sidebar
+- Code Editor
+- AI Suggestion Panel
+- Settings Modal
+- Community Feed
+
+----------------------------------------------------
+
+## Data Model & Supabase Setup
+
+### Database Schema
+- User Preferences Table
+- Templates Metadata Table
+- Community Contributions Table
+
+### Row-Level Security
+Enabled by default
+
+### Auth Requirements
+- Local authentication with optional integration for third-party dev tools.
